@@ -8,9 +8,15 @@ from .models import Women
 from .serializers import WomenSerializer
 
 
+#######################################################################
+
+
 class WomenAPIView_aaa(generics.ListAPIView):
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
+
+
+#######################################################################
 
 
 class WomenAPIView_bbb(APIView):
@@ -20,7 +26,11 @@ class WomenAPIView_bbb(APIView):
         return Response({'имя': 'Янка'})
 
 
-class WomenAPIView(APIView):
+#######################################################################
+
+
+class WomenAPIView_ccc(APIView):
+
     def get(self, request):
         lst = Women.objects.all().values() # потому что без values это queryset, а нам нужен набор значений
         return Response({'посты':list(lst)})
@@ -34,8 +44,14 @@ class WomenAPIView(APIView):
         return Response({'пост': model_to_dict(post_new)})
 
 
+#######################################################################
 
 
+class WomenAPIView(APIView):
+
+    def get(self, request):
+        lst = Women.objects.all() # queryset
+        return Response({'посты': WomenSerializer(lst,many=True).data}) # many=True потому что список записей, а не одна
 
 
 
