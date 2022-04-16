@@ -81,7 +81,7 @@ class WomenSerializer_ccc(serializers.Serializer):
 
 """
 
-class WomenSerializer(serializers.Serializer):
+class WomenSerializer_ddd(serializers.Serializer):
     title = serializers.CharField(max_length=255)
     content = serializers.CharField()
     time_create = serializers.DateTimeField(read_only=True)
@@ -107,8 +107,14 @@ class WomenSerializer(serializers.Serializer):
 #############################################################################
 
 
+class WomenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Women
+        fields = '__all__'
+        # fields = ('title', 'content', 'category')
 
 
+#############################################################################
 
 
 

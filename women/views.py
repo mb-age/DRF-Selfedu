@@ -112,3 +112,16 @@ class WomenAPIView(APIView):
 
 ##############################################################################
 
+
+class WomenAPIList(generics.ListCreateAPIView):
+    # ListCreateAPIView реализует методы get и post
+    # list - прочесть все записи
+    # retrieve - прочесть конкретную запись
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+
+
+##############################################################################
+
+
+
