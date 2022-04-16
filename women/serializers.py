@@ -30,7 +30,8 @@ class WomenSerializer_bbb(serializers.Serializer):
     content = serializers.CharField()
 
 def encode_bbb():
-    """ Кодирование, Преобразование объекта WomenModel в json формат  """
+    """ Кодирование, Преобразование объекта WomenModel в json формат
+    Функция get во views"""
     model = WomenModel_bbb('Angie', 'Content - Angie')
     model_serializer = WomenSerializer_bbb(model) # объект сериализации
     # тут мы КОдируем, так что просто передаем параметр model, для ДЕкодирования нужно передавать именованный параметр data=
@@ -43,7 +44,8 @@ def encode_bbb():
     # b'{"title":"Angie","content":"Content - Angie"}' - "b" в начале
 
 def decode_bbb():
-    """ Обратное преобразование из json-строки в объект класса WomenModel """
+    """ Обратное преобразование из json-строки в объект класса WomenModel
+    Функция post во views"""
     stream = io.BytesIO(b'{"title":"Angie","content":"Content - Angie"}') # поток содержащий json строку
     # имитируем поступление json-строки от клиента
     data = JSONParser().parse(stream) # формируем из него словарь
@@ -61,13 +63,50 @@ def decode_bbb():
 ########################################################################
 
 
+class WomenSerializer_ccc(serializers.Serializer):
+    title = serializers.CharField(max_length=255)
+    content = serializers.CharField()
+    time_create = serializers.DateTimeField(read_only=True) # чтобы не надо было их заполнять при добавлении записи в бд?
+    time_update = serializers.DateTimeField(read_only=True)
+    is_published = serializers.BooleanField(default=True)
+    category_id = serializers.IntegerField()
+
+
+########################################################################
+
+""" 
+ В сериализатор можно прописывать методы create и update:
+ create(self, validated_data) - для добавления (создания) записи
+ update(self, instance, validated_data) - для изменения записи
+
+"""
+
 class WomenSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
     content = serializers.CharField()
-    time_create = serializers.DateTimeField()
-    time_update = serializers.DateTimeField()
+    time_create = serializers.DateTimeField(read_only=True)
+    time_update = serializers.DateTimeField(read_only=True)
     is_published = serializers.BooleanField(default=True)
     category_id = serializers.IntegerField()
+
+    def create(self, validated_data): # post
+        return Women.objects.create(**validated_data)
+
+    def update(self, instance, validated_data): # put
+        # instance - ссылка на обьект модели Women
+        # val_data - словарь из проверенных даных, которые нужно изменить в базе данных
+        instance.title = validated_data.get('title', instance.title)
+        instance.content = validated_data.get('content', instance.content)
+        instance.time_update = validated_data.get('time_update', instance.time_update)
+        instance.is_published = validated_data.get('is_published', instance.is_published)
+        instance.category_id = validated_data.get('category_id', instance.category_id)
+        instance.save()
+        return instance
+
+
+#############################################################################
+
+
 
 
 
