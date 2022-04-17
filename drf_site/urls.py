@@ -49,6 +49,10 @@ urlpatterns = [
     path('api/v1/womenviewset/<int:pk>/', WomenViewSet.as_view({'put':'update'})),
 
     path('api/v1/', include(router.urls)), # http://127.0.0.1:8000/api/v1/womenrouter/(id)
+
+    path('api/v1/women/', WomenAPIList.as_view()),
+    path('api/v1/women/<int:pk>/', WomenAPIUpdate.as_view()),
+    path('api/v1/womendelete/<int:pk>/', WomenAPIDestroy.as_view()),
 ]
 
 

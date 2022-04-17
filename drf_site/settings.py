@@ -129,5 +129,8 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', # если закомменчено, не показывает интерфейса rest-framework, только json (нельзя ничего редактировать, удалять и т.д.)
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny' # permissions во views надписывают permissions в settings'ах
     ]
 }

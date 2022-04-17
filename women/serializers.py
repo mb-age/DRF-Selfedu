@@ -107,7 +107,7 @@ class WomenSerializer_ddd(serializers.Serializer):
 #############################################################################
 
 
-class WomenSerializer(serializers.ModelSerializer):
+class WomenSerializer_eee(serializers.ModelSerializer):
     class Meta:
         model = Women
         fields = '__all__'
@@ -117,4 +117,11 @@ class WomenSerializer(serializers.ModelSerializer):
 #############################################################################
 
 
+class WomenSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault)
+    # чтобы нельзя было заполнять это поле
 
+    class Meta:
+        model = Women
+        fields = '__all__'
+        # fields = ('title', 'content', 'category')
