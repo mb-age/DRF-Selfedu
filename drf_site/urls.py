@@ -14,15 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
+from women.views import *
 
-from women.views import WomenAPIView, WomenAPIList, WomenAPIUpdate, WomenAPIDetailView
+# c viewset'ами лучше использовать роутеры
+router = routers.SimpleRouter()
+router.register(r'womenrouter', WomenViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/womenlist', WomenAPIView.as_view()), # get, post
     path('api/v1/womenlist/<int:pk>', WomenAPIView.as_view()), # put, delete
+
     path('api/v1/womenlistcreate/', WomenAPIList.as_view()),
     path('api/v1/womenlistcreate/<int:pk>/', WomenAPIUpdate.as_view()),
     path('api/v1/womendetail/<int:pk>/', WomenAPIDetailView.as_view()),
+
+    path('api/v1/womenviewset/', WomenViewSet.as_view({'get':'list'})), # get - метод для обработки запроса, list - метод вызываемый в самом вьюсете для обработки запроса
+    path('api/v1/womenviewset/<int:pk>/', WomenViewSet.as_view({'put':'update'})),
+
+    path('api/v1/', include(router.urls)), # http://127.0.0.1:8000/api/v1/womenrouter/(id)
 ]

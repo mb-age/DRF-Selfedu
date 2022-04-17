@@ -1,8 +1,9 @@
 from django.forms import model_to_dict
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Women
 from .serializers import WomenSerializer
@@ -133,6 +134,30 @@ class WomenAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 ##############################################################################
+
+
+class WomenViewSet_aaa(viewsets.ModelViewSet):
+    # ModelViewSet - read, create, update, delete
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+
+
+class WomenViewSet_bbb(viewsets.ReadOnlyModelViewSet):
+    # ReadOnlyModelViewSet - read (list, retrieve)
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+
+class WomenViewSet(mixins.CreateModelMixin, # создание "своего" вьюсета
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   # mixins.DestroyModelMixin,
+                   mixins.ListModelMixin,
+                   GenericViewSet):
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+
+
+###############################################################################
 
 
 
