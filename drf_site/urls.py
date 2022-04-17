@@ -22,6 +22,20 @@ from women.views import *
 router = routers.SimpleRouter()
 router.register(r'womenrouter', WomenViewSet)
 
+"""
+url name по умолчанию model_name плюс -list или -detail (если pk)
+можно задать свое:
+router.register(r'womenrouter', WomenViewSet, basename='xxx')
+name будет xxx-list
+basename ОБЯЗАТЕЛЕН если во ViewSet мы не указываем атрибут queryset
+
+
+Разница SimpleRouter и DefaultRouter:
+Simple список маршрутов: /api/v1/women/,  /api/v1/women/pk
+Defaut: то же самое плюс  /api/v1/
+"""
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/womenlist', WomenAPIView.as_view()), # get, post
@@ -31,8 +45,25 @@ urlpatterns = [
     path('api/v1/womenlistcreate/<int:pk>/', WomenAPIUpdate.as_view()),
     path('api/v1/womendetail/<int:pk>/', WomenAPIDetailView.as_view()),
 
-    path('api/v1/womenviewset/', WomenViewSet.as_view({'get':'list'})), # get - метод для обработки запроса, list - метод вызываемый в самом вьюсете для обработки запроса
+    path('api/v1/womenviewset/', WomenViewSet.as_view({'get':'list'})), # get - тип запроса, list - метод вызываемый в самом вьюсете для обработки запроса
     path('api/v1/womenviewset/<int:pk>/', WomenViewSet.as_view({'put':'update'})),
 
     path('api/v1/', include(router.urls)), # http://127.0.0.1:8000/api/v1/womenrouter/(id)
 ]
+
+
+""" Создание своего класса роутеров: 
+читает список статей либо конкретную статью по id"""
+class MyCustomRouter(routers.SimpleRouter):
+    routes = [
+        routers.Route(url=r'^{prefix}$', # еще где-то тут слеш в конце прописать может понадобиться...
+                      mapping={'get': 'list'},
+                      name='{basename}-list',
+                      detail=False,
+                      initkwargs={'suffix': 'List'}),
+        routers.Route(url=r'^{prefix}/{lookups}$',
+                      mapping={'get': 'retrieve'},
+                      name='{basename}-detail',
+                      detail=True,
+                      initkwargs={'suffix': 'Detail'}),
+    ]

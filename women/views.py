@@ -1,11 +1,12 @@
 from django.forms import model_to_dict
 from django.shortcuts import render
 from rest_framework import generics, viewsets, mixins
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Women
+from .models import Women, Category
 from .serializers import WomenSerializer
 
 
@@ -147,7 +148,7 @@ class WomenViewSet_bbb(viewsets.ReadOnlyModelViewSet):
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
 
-class WomenViewSet(mixins.CreateModelMixin, # создание "своего" вьюсета
+class WomenViewSet_ccc(mixins.CreateModelMixin, # создание "своего" вьюсета
                    mixins.RetrieveModelMixin,
                    mixins.UpdateModelMixin,
                    # mixins.DestroyModelMixin,
@@ -160,4 +161,32 @@ class WomenViewSet(mixins.CreateModelMixin, # создание "своего" в
 ###############################################################################
 
 
+class WomenViewSet(viewsets.ModelViewSet):
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
 
+    """ Если стандартных url недостаточно, можно определить новые с помощью декоратора action"""
+    @action(methods=['get'], detail=False)
+    def categories(self, request):
+        """ Возвращает список категорий (актрисы, певицы) """
+        # api/v1/womenrouter/categories (имя функции)
+        categories = Category.objects.all()
+        return Response({'категории': [c.name for c in categories]})
+
+    @action(methods=['get'], detail=True)
+    def category(self, request, pk=None):
+        """ Возвращает одну категорию по id """
+        # api/v1/womenrouter/1/category - категория с id 1
+        # api/v1/womenrouter/2/category - категория с id 2
+        categories = Category.objects.get(pk=pk)
+        return Response({'категория': categories.name})
+
+
+    """ Иногда по определенному url запросу нужно возвращать не все записи, а только определенные, по какому-то условию"""
+    def get_queryset(self):
+        """ Переопределяем метод get_queryset. Возвращаем только первые три записи """
+        # теперь можно убрать атрибут queryset из класса, но тогда в роуте нужно будет прописать basename
+        pk = self.kwargs.get('pk') # получаем pk если он ЕСТЬ в url
+        if not pk:
+            return Women.objects.all()[:3]
+        return Women.objects.filter(pk=pk) # filter потому что он возвращает список из одной записи, а нам нужен список, потому что get_queryset должен возвращать список, если не будет списка, то error
