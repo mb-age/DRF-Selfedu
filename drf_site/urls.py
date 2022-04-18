@@ -59,7 +59,7 @@ urlpatterns = [
     path('api/v1/session-auth/', include('rest_framework.urls')), # подключаем авторизацию на основе сессии cook (только эта одна строчка)
     # авторизация на основе сессии привязана к домену, к браузеру, к устройству
 
-    path('api/v1/token-auth/', include('djoser.urls')),
+    path('api/v1/token-auth/', include('djoser.urls')), # token-auth/users - список юзеров
     re_path(r'^token-auth/', include('djoser.urls.authtoken')), # ...8000/token-auth/token/login (без api/v1/)
 
     path('api/v1/jwt-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'), # JWT - Json Web Token

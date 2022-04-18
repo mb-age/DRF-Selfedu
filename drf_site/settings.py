@@ -128,6 +128,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # для пагинации, настройки общие для всего проекта (будь то список записей или пользователей)
+    'PAGE_SIZE': 2, # лимит записей на странице
+
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', # если закомменчено, не показывает интерфейса rest-framework, только json (нельзя ничего редактировать, удалять и т.д.)

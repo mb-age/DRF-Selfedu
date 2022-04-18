@@ -2,6 +2,7 @@ from django.forms import model_to_dict
 from rest_framework import generics, viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -204,7 +205,7 @@ class WomenViewSet(viewsets.ModelViewSet):
 - IsAuthenticatedOrReadOnly 
 """
 
-class WomenAPIList(generics.ListCreateAPIView):
+class WomenAPIList_bbb(generics.ListCreateAPIView):
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
@@ -222,6 +223,19 @@ class WomenAPIDestroy(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAdminOrReadOnly, )
 
 
+##############################################################################
 
 
+""" Создаем свой класс пагинации """
+class WomenAPIListPagination(PageNumberPagination): # чтобы отдельно менять пагинацию для какого-то api-запроса
+    page_size = 3 # количество записей на странице
+    page_query_param = 'page_size' # чтобы поменять кол-во записей вручную в браузере (у меня не работает)
+    max_page_size = 1000 # относится к page_query_param; максимальное число, которое можно проставить, меняя вручную в браузере (если больше, автоматически меняется на это 1000)
+
+
+class WomenAPIList(generics.ListCreateAPIView):
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+    pagination_class = WomenAPIListPagination # подключаем пагинацию к классу (надписывает параметры пагинации из settings)
 
