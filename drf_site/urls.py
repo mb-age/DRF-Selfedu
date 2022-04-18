@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from women.views import *
 
@@ -54,7 +54,11 @@ urlpatterns = [
     path('api/v1/women/<int:pk>/', WomenAPIUpdate.as_view()),
     path('api/v1/womendelete/<int:pk>/', WomenAPIDestroy.as_view()),
 
-    path('api/v1/drf-auth/', include('rest_framework.urls')), # подключаем авторизацию на основе сессии cook (только эта одна строчка)
+    path('api/v1/session-auth/', include('rest_framework.urls')), # подключаем авторизацию на основе сессии cook (только эта одна строчка)
+    # авторизация на основе сессии привязана к домену, к браузеру, к устройству
+
+    path('api/v1/token-auth/', include('djoser.urls')),
+    re_path(r'^token-auth/', include('djoser.urls.authtoken')), # ...8000/token-auth/token/login (без api/v1/)
 ]
 
 

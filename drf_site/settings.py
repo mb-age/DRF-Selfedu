@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'women.apps.WomenConfig', # подключаем приложение
     'rest_framework', # зарегестрировать DRF
+    'rest_framework.authtoken', # чтобы rest_framework использовал свою стандартную таблицу для авторизации по токенам (выполнить migrate)
+    'djoser' # приложение для token authentication
 ]
 
 MIDDLEWARE = [
@@ -132,5 +134,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny' # permissions во views надписывают permissions в settings'ах
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication', # для авторизации по токенам (разрешаем)
+        'rest_framework.authentication.BasicAuthentication', # присутствует по умоланию
+        'rest_framework.authentication.SessionAuthentication', # присутствует по умоланию
     ]
 }
