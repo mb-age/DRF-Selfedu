@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
 from women.views import *
 
 # c viewset'ами лучше использовать роутеры
@@ -59,7 +61,14 @@ urlpatterns = [
 
     path('api/v1/token-auth/', include('djoser.urls')),
     re_path(r'^token-auth/', include('djoser.urls.authtoken')), # ...8000/token-auth/token/login (без api/v1/)
+
+    path('api/v1/jwt-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'), # JWT - Json Web Token
+    path('api/v1/jwt-auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/jwt-auth/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
+
+
+###############################################################################
 
 
 """ Создание своего класса роутеров: 
@@ -77,3 +86,5 @@ class MyCustomRouter(routers.SimpleRouter):
                       detail=True,
                       initkwargs={'suffix': 'Detail'}),
     ]
+
+
